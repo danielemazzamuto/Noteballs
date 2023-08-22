@@ -35,7 +35,10 @@ const noteContent = ref("");
 // Store
 const storeNotes = useNotesStore();
 
-noteContent.value = storeNotes.getNoteContent(route.params.id);
+//Passing the ID route to the currentNoteId in the store file - to be used with computed method
+storeNotes.currentNoteId = route.params.id;
+//Assign the note content retreived to the text area
+noteContent.value = storeNotes.getNoteContent;
 
 // Handler Save Clicked
 const handleSaveClicked = () => {

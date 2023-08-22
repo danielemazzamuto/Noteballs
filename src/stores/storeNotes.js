@@ -1,7 +1,9 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const useNotesStore = defineStore("storeNotes", () => {
+  const currentNoteId = ref(null);
+
   const notes = ref([
     {
       id: "id1",
@@ -29,10 +31,12 @@ export const useNotesStore = defineStore("storeNotes", () => {
     notes.value = notes.value.filter((note) => note.id !== idToDelete);
   };
 
-  const getNoteContent = (id) => {
-    const noteFound = notes.value.find((note) => note.id === id);
-    return noteFound.content;
-  };
+  //We need to define the currentNoteId as a ref here, between the store and child component
+  // in order to pass it to the computed method, as computed DON'T ACCEPT params
+  const getNoteContent = computed(() => {
+    return notes.value.filter((note) => note.id === currentNoteId.value)[0]
+      .content;
+  });
 
   const updateNote = (idToUpdate, newContent) => {
     notes.value = notes.value.map((obj) => {
@@ -41,5 +45,12 @@ export const useNotesStore = defineStore("storeNotes", () => {
     });
   };
 
-  return { notes, addNote, deleteNote, getNoteContent, updateNote };
+  return {
+    notes,
+    addNote,
+    deleteNote,
+    getNoteContent,
+    updateNote,
+    currentNoteId,
+  };
 });
