@@ -34,8 +34,10 @@ export const useNotesStore = defineStore("storeNotes", () => {
   //We need to define the currentNoteId as a ref here, between the store and child component
   // in order to pass it to the computed method, as computed DON'T ACCEPT params
   const getNoteContent = computed(() => {
-    return notes.value.filter((note) => note.id === currentNoteId.value)[0]
-      .content;
+    const noteFound = notes.value.find(
+      (note) => note.id === currentNoteId.value
+    );
+    return noteFound.content;
   });
 
   const updateNote = (idToUpdate, newContent) => {
