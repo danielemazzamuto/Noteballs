@@ -47,6 +47,12 @@ export const useNotesStore = defineStore("storeNotes", () => {
     });
   };
 
+  const totalNotesCount = computed(() => notes.value.length);
+
+  const totalNotesCharacters = computed(() =>
+    notes.value.reduce((acc, obj) => acc + obj.content.length, 0)
+  );
+
   return {
     notes,
     addNote,
@@ -54,5 +60,7 @@ export const useNotesStore = defineStore("storeNotes", () => {
     getNoteContent,
     updateNote,
     currentNoteId,
+    totalNotesCount,
+    totalNotesCharacters,
   };
 });

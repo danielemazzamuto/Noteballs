@@ -33,7 +33,6 @@ const newNote = ref("");
 const addEditNoteRef = ref(null);
 
 const addNote = () => {
-  console.log(addEditNoteRef);
   //addNote to the Store - by triggering the store method
   storeNotes.addNote(newNote.value);
   //clear input textarea
