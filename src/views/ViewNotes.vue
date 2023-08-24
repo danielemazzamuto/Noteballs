@@ -20,6 +20,7 @@ import { ref } from "vue";
 import Note from "@/components/Notes/Note.vue";
 import AddEditNote from "@/components/Notes/AddEditNote.vue";
 import { useNotesStore } from "@/stores/storeNotes.js";
+import { useWatchCharacters } from "@/use/useWatchCharacters.js";
 
 /*
     store
@@ -39,4 +40,7 @@ const addNote = () => {
   newNote.value = "";
   addEditNoteRef.value.focusTextarea();
 };
+
+// Watch characters - composable
+useWatchCharacters(newNote, 100);
 </script>

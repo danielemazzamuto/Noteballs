@@ -10,6 +10,7 @@
           class="textarea"
           placeholder="Add a new note"
           ref="textareaRef"
+          maxlength="100"
           v-autofocus
         ></textarea>
       </div>
@@ -26,6 +27,7 @@
 <script setup>
 // Imports
 import { ref } from "vue";
+import { vAutofocus } from "@/directives/vAutofocus";
 
 // Props
 const props = defineProps({
@@ -51,9 +53,4 @@ const focusTextarea = () => {
 defineExpose({
   focusTextarea,
 });
-
-// Directives
-const vAutofocus = {
-  mounted: (el) => el.focus(),
-};
 </script>

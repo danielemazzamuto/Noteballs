@@ -37,7 +37,7 @@ export const useNotesStore = defineStore("storeNotes", () => {
     const noteFound = notes.value.find(
       (note) => note.id === currentNoteId.value
     );
-    return noteFound.content;
+    return noteFound?.content;
   });
 
   const updateNote = (idToUpdate, newContent) => {
