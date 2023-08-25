@@ -1,7 +1,7 @@
 <template>
   <div class="modal is-active p-2">
     <div class="modal-background"></div>
-    <div class="modal-card">
+    <div ref="modalCardRef" class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">Delete Note?</p>
         <button @click="closeModal" class="delete" aria-label="close"></button>
@@ -19,7 +19,8 @@
 
 <script setup>
 // Imports
-import { defineProps, defineEmits } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { onClickOutside } from "@vueuse/core";
 
 // Props
 const props = defineProps({
@@ -37,4 +38,22 @@ const emit = defineEmits(["update:modelValue"]);
 const closeModal = () => {
   emit("update:modelValue", false);
 };
+
+// Close outside to close Modal
+const modalCardRef = ref(null);
+
+//element target to close
+onClickOutside(modalCardRef, closeModal);
+
+// Keyboard control close modal
+const handleKeyboardListener = (e) => {
+  if (e.key === "Escape") closeModal();
+};
+onMounted(() => {
+  document.addEventListener("keyup", handleKeyboardListener);
+});
+//as the addEventListener keeps living, we must stop it after the modal is closed (unmounted)
+onUnmounted(() => {
+  document.removeEventListener("keyup", handleKeyboardListener);
+});
 </script>

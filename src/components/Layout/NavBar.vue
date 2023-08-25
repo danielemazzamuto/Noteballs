@@ -54,6 +54,8 @@ import { ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 
 const showMobileNav = ref(false);
+
+// Close outside to close Modal
 const navbarMenuRef = ref(null);
 const ignoreBurgerRef = ref(null);
 
