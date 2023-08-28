@@ -1,20 +1,35 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+//Importing Firebase DB
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/js/firebase.js";
 
 export const useNotesStore = defineStore("storeNotes", () => {
   const currentNoteId = ref(null);
 
   const notes = ref([
-    {
-      id: "id1",
-      content:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ullam mollitia rerum reiciendis maxime in provident debitis nam amet nesciunt, animi ducimus, necessitatibus aliquam repellat eius consequuntur, quibusdam nihil neque beatae.",
-    },
-    {
-      id: "id2",
-      content: "This is a shorter note! Woo!",
-    },
+    // {
+    //   id: "id1",
+    //   content:
+    //     "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ullam mollitia rerum reiciendis maxime in provident debitis nam amet nesciunt, animi ducimus, necessitatibus aliquam repellat eius consequuntur, quibusdam nihil neque beatae.",
+    // },
+    // {
+    //   id: "id2",
+    //   content: "This is a shorter note! Woo!",
+    // },
   ]);
+
+  //Get notes from Firebase DB
+  const getNotes = async () => {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    querySnapshot.forEach((doc) => {
+      const note = {
+        id: doc.id,
+        content: doc.data().content,
+      };
+      notes.value.push(note);
+    });
+  };
 
   const addNote = (noteContent) => {
     const currentDate = new Date().getTime();
@@ -62,5 +77,6 @@ export const useNotesStore = defineStore("storeNotes", () => {
     currentNoteId,
     totalNotesCount,
     totalNotesCharacters,
+    getNotes,
   };
 });
