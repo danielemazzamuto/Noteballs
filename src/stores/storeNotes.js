@@ -1,8 +1,17 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 //Importing Firebase DB
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  setDoc,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/js/firebase.js";
+
+const notesCollection = collection(db, "notes");
 
 export const useNotesStore = defineStore("storeNotes", () => {
   const currentNoteId = ref(null);
@@ -21,29 +30,31 @@ export const useNotesStore = defineStore("storeNotes", () => {
 
   //Get notes from Firebase DB
   const getNotes = async () => {
-    const querySnapshot = await getDocs(collection(db, "notes"));
-    querySnapshot.forEach((doc) => {
-      const note = {
-        id: doc.id,
-        content: doc.data().content,
-      };
-      notes.value.push(note);
+    // Realtime DB - Keeps listening for changes all time
+    onSnapshot(notesCollection, (querySnapshot) => {
+      const snapNotes = [];
+      querySnapshot.forEach((doc) => {
+        const note = {
+          id: doc.id,
+          content: doc.data().content,
+        };
+        snapNotes.push(note);
+      });
+      notes.value = snapNotes;
     });
   };
 
-  const addNote = (noteContent) => {
+  const addNote = async (noteContent) => {
     const currentDate = new Date().getTime();
     const id = currentDate.toString();
 
-    const note = {
-      id,
+    await setDoc(doc(notesCollection, id), {
       content: noteContent,
-    };
-    notes.value.unshift(note);
+    });
   };
 
-  const deleteNote = (idToDelete) => {
-    notes.value = notes.value.filter((note) => note.id !== idToDelete);
+  const deleteNote = async (idToDelete) => {
+    await deleteDoc(doc(notesCollection, idToDelete));
   };
 
   //We need to define the currentNoteId as a ref here, between the store and child component
@@ -55,10 +66,9 @@ export const useNotesStore = defineStore("storeNotes", () => {
     return noteFound?.content;
   });
 
-  const updateNote = (idToUpdate, newContent) => {
-    notes.value = notes.value.map((obj) => {
-      if (obj.id === idToUpdate) return { ...obj, content: newContent };
-      return obj;
+  const updateNote = async (idToUpdate, newContent) => {
+    await updateDoc(doc(notesCollection, idToUpdate), {
+      content: newContent,
     });
   };
 
