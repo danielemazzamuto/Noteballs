@@ -4,14 +4,17 @@ import { computed, ref } from "vue";
 import {
   collection,
   onSnapshot,
-  setDoc,
   doc,
   deleteDoc,
   updateDoc,
+  query,
+  orderBy,
+  addDoc,
 } from "firebase/firestore";
 import { db } from "@/js/firebase.js";
 
-const notesCollection = collection(db, "notes");
+const notesCollectionRef = collection(db, "notes");
+const noteCollectionQuery = query(notesCollectionRef, orderBy("date", "desc"));
 
 export const useNotesStore = defineStore("storeNotes", () => {
   const currentNoteId = ref(null);
@@ -31,7 +34,7 @@ export const useNotesStore = defineStore("storeNotes", () => {
   //Get notes from Firebase DB
   const getNotes = async () => {
     // Realtime DB - Keeps listening for changes all time
-    onSnapshot(notesCollection, (querySnapshot) => {
+    onSnapshot(noteCollectionQuery, (querySnapshot) => {
       const snapNotes = [];
       querySnapshot.forEach((doc) => {
         const note = {
@@ -46,15 +49,16 @@ export const useNotesStore = defineStore("storeNotes", () => {
 
   const addNote = async (noteContent) => {
     const currentDate = new Date().getTime();
-    const id = currentDate.toString();
+    const date = currentDate.toString();
 
-    await setDoc(doc(notesCollection, id), {
+    await addDoc(notesCollectionRef, {
+      date,
       content: noteContent,
     });
   };
 
   const deleteNote = async (idToDelete) => {
-    await deleteDoc(doc(notesCollection, idToDelete));
+    await deleteDoc(doc(notesCollectionRef, idToDelete));
   };
 
   //We need to define the currentNoteId as a ref here, between the store and child component
@@ -67,7 +71,7 @@ export const useNotesStore = defineStore("storeNotes", () => {
   });
 
   const updateNote = async (idToUpdate, newContent) => {
-    await updateDoc(doc(notesCollection, idToUpdate), {
+    await updateDoc(doc(notesCollectionRef, idToUpdate), {
       content: newContent,
     });
   };
