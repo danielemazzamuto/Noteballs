@@ -31,8 +31,11 @@ export const useNotesStore = defineStore("storeNotes", () => {
     // },
   ]);
 
+  const notesLoaded = ref(false);
+
   //Get notes from Firebase DB
   const getNotes = async () => {
+    notesLoaded.value = false;
     // Realtime DB - Keeps listening for changes all time
     onSnapshot(noteCollectionQuery, (querySnapshot) => {
       const snapNotes = [];
@@ -40,10 +43,13 @@ export const useNotesStore = defineStore("storeNotes", () => {
         const note = {
           id: doc.id,
           content: doc.data().content,
+          date: doc.data().date,
         };
         snapNotes.push(note);
       });
+
       notes.value = snapNotes;
+      notesLoaded.value = true;
     });
   };
 
@@ -92,5 +98,6 @@ export const useNotesStore = defineStore("storeNotes", () => {
     totalNotesCount,
     totalNotesCharacters,
     getNotes,
+    notesLoaded,
   };
 });
