@@ -9,12 +9,12 @@
 <script setup>
 import { onMounted } from "vue";
 import NavBar from "@/components/Layout/NavBar.vue";
-import { useNotesStore } from "@/stores/storeNotes.js";
+import { useStoreAuth } from "@/stores/storeAuth.js";
 
-const storeNotes = useNotesStore();
+const storeAuth = useStoreAuth();
 
 onMounted(() => {
-  storeNotes.getNotes();
+  storeAuth.init();
 });
 </script>
 

@@ -12,26 +12,29 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { db } from "@/js/firebase.js";
+import { useStoreAuth } from "@/stores/storeAuth.js";
 
-const notesCollectionRef = collection(db, "notes");
-const noteCollectionQuery = query(notesCollectionRef, orderBy("date", "desc"));
+let notesCollectionRef;
+let noteCollectionQuery;
 
 export const useNotesStore = defineStore("storeNotes", () => {
   const currentNoteId = ref(null);
 
-  const notes = ref([
-    // {
-    //   id: "id1",
-    //   content:
-    //     "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ullam mollitia rerum reiciendis maxime in provident debitis nam amet nesciunt, animi ducimus, necessitatibus aliquam repellat eius consequuntur, quibusdam nihil neque beatae.",
-    // },
-    // {
-    //   id: "id2",
-    //   content: "This is a shorter note! Woo!",
-    // },
-  ]);
+  const notes = ref([]);
 
   const notesLoaded = ref(false);
+
+  const init = () => {
+    const storeAuth = useStoreAuth();
+    notesCollectionRef = collection(
+      db,
+      "users",
+      storeAuth.data.user.id,
+      "notes"
+    );
+    noteCollectionQuery = query(notesCollectionRef, orderBy("date", "desc"));
+    getNotes();
+  };
 
   //Get notes from Firebase DB
   const getNotes = async () => {
@@ -51,6 +54,10 @@ export const useNotesStore = defineStore("storeNotes", () => {
       notes.value = snapNotes;
       notesLoaded.value = true;
     });
+  };
+
+  const clearNotes = () => {
+    notes.value = [];
   };
 
   const addNote = async (noteContent) => {
@@ -99,5 +106,7 @@ export const useNotesStore = defineStore("storeNotes", () => {
     totalNotesCharacters,
     getNotes,
     notesLoaded,
+    init,
+    clearNotes,
   };
 });
