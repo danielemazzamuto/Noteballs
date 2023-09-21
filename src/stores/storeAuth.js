@@ -59,7 +59,6 @@ export const useStoreAuth = defineStore("storeAuth", () => {
       );
       // Signed in
       const user = userCredential.user;
-      console.log(user);
     } catch (error) {
       console.log(error.message);
     }
@@ -68,7 +67,6 @@ export const useStoreAuth = defineStore("storeAuth", () => {
   const logoutUser = async () => {
     try {
       await signOut(auth);
-      console.log("signed out");
     } catch (error) {
       console.error(error.message);
     }

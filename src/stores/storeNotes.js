@@ -17,6 +17,8 @@ import { useStoreAuth } from "@/stores/storeAuth.js";
 let notesCollectionRef;
 let noteCollectionQuery;
 
+let getNotesSnapshot = null;
+
 export const useNotesStore = defineStore("storeNotes", () => {
   const currentNoteId = ref(null);
 
@@ -40,24 +42,31 @@ export const useNotesStore = defineStore("storeNotes", () => {
   const getNotes = async () => {
     notesLoaded.value = false;
     // Realtime DB - Keeps listening for changes all time
-    onSnapshot(noteCollectionQuery, (querySnapshot) => {
-      const snapNotes = [];
-      querySnapshot.forEach((doc) => {
-        const note = {
-          id: doc.id,
-          content: doc.data().content,
-          date: doc.data().date,
-        };
-        snapNotes.push(note);
-      });
+    getNotesSnapshot = onSnapshot(
+      noteCollectionQuery,
+      (querySnapshot) => {
+        const snapNotes = [];
+        querySnapshot.forEach((doc) => {
+          const note = {
+            id: doc.id,
+            content: doc.data().content,
+            date: doc.data().date,
+          };
+          snapNotes.push(note);
+        });
 
-      notes.value = snapNotes;
-      notesLoaded.value = true;
-    });
+        notes.value = snapNotes;
+        notesLoaded.value = true;
+      },
+      (error) => {
+        console.log(error.message);
+      }
+    );
   };
 
   const clearNotes = () => {
     notes.value = [];
+    if (getNotesSnapshot) getNotesSnapshot(); //Unsubscribe from any active listener
   };
 
   const addNote = async (noteContent) => {
