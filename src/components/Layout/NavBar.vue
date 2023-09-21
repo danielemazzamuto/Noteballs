@@ -60,7 +60,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { useStoreAuth } from "@/stores/StoreAuth.js";
+import { useStoreAuth } from "@/stores/storeAuth.js";
 import { onClickOutside } from "@vueuse/core";
 
 const storeAuth = useStoreAuth();
