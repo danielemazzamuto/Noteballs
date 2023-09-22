@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyBGcb8srZy7ESWDncTCSlTVv94XOFUFZf8",
   authDomain: "noteballs-vue3-22497.firebaseapp.com",
   projectId: "noteballs-vue3-22497",
   storageBucket: "noteballs-vue3-22497.appspot.com",
